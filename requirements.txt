@@ -16,7 +16,7 @@ onnx>=1.15                           # 1.23.1 tested; required by torch.onnx.exp
 onnxruntime>=1.17                    # 1.30.0 tested; CPU inference + int8 quantization
 
 # ── Tokenizer (rust, zero-Python deps; for ONNX bundle deployment) ──
-tokenizers>=0.20                     # 0.23.2 tested; standalone .json tokenizer loading
+tokenizers>=0.23.2                     # 0.23.2 tested; standalone .json tokenizer loading
 
 # ── Optional: HTTP serve (serve.py) ──
 # fastapi>=0.110
