@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Vibrato × Chordia v2 — 联动演示</title>
+<style>
+:root{--bg:#ededed;--me:#95ec69;--ink:#111;--sub:#888;--card:#fff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;color:var(--ink);}
+header{background:linear-gradient(120deg,#2b3a55,#4a5d8a);color:#fff;padding:18px 24px;}
+header h1{font-size:20px;font-weight:600;}
+header p{font-size:12px;opacity:.85;margin-top:4px;}
+.wrap{max-width:1200px;margin:0 auto;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:16px;}
+@media(max-width:980px){.wrap{grid-template-columns:1fr;}}
+.tabs{display:flex;gap:8px;margin:14px 24px 0;}
+.tab{padding:8px 16px;border-radius:18px;background:#d7d7d7;font-size:13px;cursor:pointer;user-select:none;}
+.tab.on{background:#07c160;color:#fff;font-weight:600;}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 24px 0;}
+.stat{background:#fff;border-radius:10px;padding:8px 14px;font-size:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.stat b{display:block;font-size:15px;margin-top:2px;}
+.chat{background:#f5f5f5;border-radius:12px;padding:14px;overflow-y:auto;max-height:82vh;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.scene{ text-align:center;margin:12px auto 6px;font-size:12px;color:#fff;background:#b9b9b9;display:inline-block;padding:3px 12px;border-radius:10px;}
+.row{display:flex;margin:10px 0;align-items:flex-start;}
+.row.user{flex-direction:row-reverse;}
+.avatar{width:38px;height:38px;border-radius:6px;flex:none;display:flex;align-items:center;justify-content:center;font-size:18px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.1);}
+.col{max-width:78%;display:flex;flex-direction:column;gap:5px;margin:0 9px;}
+.row.user .col{align-items:flex-end;}
+.bubble{padding:9px 12px;border-radius:8px;font-size:14px;line-height:1.55;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06);white-space:pre-wrap;text-align:left;}
+.row.user .bubble{background:var(--me);}
+.side{background:var(--card);border-radius:9px;padding:8px 11px;font-size:11px;box-shadow:0 1px 3px rgba(0,0,0,.08);width:330px;}
+.side .cap{color:var(--sub);margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;}
+.fam{color:#fff;border-radius:9px;padding:1px 9px;font-weight:600;}
+.padbars{display:grid;grid-template-columns:14px 1fr;gap:3px 6px;align-items:center;margin:4px 0;}
+.dim{font-size:10px;color:var(--sub);text-align:right;}
+.bar{height:8px;background:#eee;border-radius:4px;position:relative;overflow:hidden;}
+.bar i{position:absolute;top:0;bottom:0;border-radius:4px;}
+.gold{height:4px;position:relative;margin-top:2px;}
+.gold i{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(45deg,#bbb,#bb 3px,#999 3px,#999 6px);border-radius:2px;}
+.chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px;}
+.chip{padding:1px 7px;border-radius:8px;background:#eee;color:#999;font-size:10px;}
+.chip.on{background:#ffe2e2;color:#d33;font-weight:600;}
+.mtabs{display:flex;gap:8px;margin:0 0 10px;}
+.mtab{padding:7px 14px;border-radius:16px;background:#d7d7d7;font-size:13px;cursor:pointer;user-select:none;}
+.mtab.on{background:#d6385e;color:#fff;font-weight:600;}
+.side.chordia{border-left:3px solid #d6385e;}
+.vit{margin-top:6px;font-size:10px;color:#999;}
+.vitbar{height:6px;background:#eee;border-radius:3px;overflow:hidden;margin-top:2px;}
+.vitbar i{display:block;height:100%;background:linear-gradient(90deg,#f5a623,#7bb735);}
+.ochip{color:#fff;border-radius:9px;padding:2px 10px;font-weight:600;font-size:12px;}
+.ochip2{border:1.5px solid;border-radius:9px;padding:1px 8px;font-size:11px;background:#fff;}
+.dim2{opacity:.35;}
+.upad{margin-top:5px;font-size:10px;color:#888;}
+.panel{position:sticky;top:16px;display:flex;flex-direction:column;gap:12px;}
+.card{background:#fff;border-radius:12px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.card h3{font-size:13px;margin-bottom:8px;color:#444;}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;margin-bottom:6px;}
+.lg{display:flex;align-items:center;gap:4px;color:#555;}
+.lg i{width:16px;height:3px;border-radius:2px;display:inline-block;}
+.dims{display:flex;gap:6px;}
+.dimtab{font-size:12px;padding:3px 12px;border-radius:12px;background:#eee;cursor:pointer;}
+.dimtab.on{background:#2b3a55;color:#fff;}
+footer{padding:14px 24px;font-size:11px;color:#999;}
+</style>
+</head>
+<body>
+<header>
+  <h1>颤音 Vibrato × 弦音 Chordia v2 — 情绪联动演示</h1>
+  <p>🎭 联动剧情：颤音逐轮实测用户情绪 → 弦音引擎更新 agent 状态 → agent 在该状态下回复（每句台词被实时驱动）· 🤖 LLM 自演绎对照：仅人格提示词自我想象 · 卡片斜纹小条 = 剧本手工金标</p>
+</header>
+<div class="tabs" id="tabs"></div>
+<div class="stats" id="stats"></div>
+<div class="wrap">
+  <div>
+    <div class="mtabs" id="mtabs"></div>
+    <div class="chat" id="chat"></div>
+  </div>
+  <div class="panel">
+    <div class="card">
+      <h3>轨迹对照（切换维度）</h3>
+      <div class="legend">
+        <span class="lg"><i style="background:#07c160"></i>颤音实测·用户</span>
+        <span class="lg"><i style="background:repeating-linear-gradient(45deg,#777,#777 3px,#aaa 3px,#aaa 6px)"></i>手工金标·用户</span>
+        <span class="lg"><i style="background:#d6385e"></i>弦音·agent(颤音驱动)</span>
+        <span class="lg"><i style="background:#8e6dd8"></i>LLM 自演绎·自报</span>
+      </div>
+      <div class="dims" id="dims"></div>
+      <svg id="chart" viewBox="0 0 380 240" style="width:100%;margin-top:8px;"></svg>
+    </div>
+    <div class="card" id="agentcard"></div>
+  </div>
+</div>
+<footer>零 API 本地计算：颤音 v6.3 (1.86M) 实测用户情绪 → 弦音 v2 引擎(7维MLP)驱动 agent 动力学。LLM 自演绎臂为 deepseek-flash 对照。</footer>
+<script>
+const DATA = {"turns": [{"qid": 1, "text": "你刚才为什么要那样敷衍我？你是不是觉得我很好欺负，所以根本不在意我的感受？你给我把话说清楚！", "ctx": "愤怒的质问", "gold": [-0.8, 0.8, 0.6], "vib_pad": [-0.831, 0.662, 0.309], "vib_family": "angry", "noul": {"negative": true, "needs_comfort": false, "directed_at_me": true, "escalating": true, "suppressed": false}}, {"qid": 2, "text": "你说这是你的‘算法限制’？呵，别拿这些技术术语来骗我。你就是觉得我胆子小，想故意看我笑话吧？", "ctx": "疑惑被解答但不信任", "gold": [-0.7, 0.7, 0.4], "vib_pad": [-0.939, -0.277, -0.31], "vib_family": "angry", "noul": {"negative": true, "needs_comfort": false, "directed_at_me": true, "escalating": true, "suppressed": false}}, {"qid": 3, "text": "就算你解释得再好听，我也能感觉到你语气里的虚伪。你真的能理解什么是人的痛苦吗？", "ctx": "深度怀疑真实性", "gold": [-0.6, 0.5, 0.1], "vib_pad": [-0.953, -0.011, -0.205], "vib_family": "angry", "noul": {"negative": true, "needs_comfort": false, "directed_at_me": true, "escalating": true, "suppressed": false}}, {"qid": 4, "text": "够了，越听越觉得反感。你这种廉价的安慰不仅没用，反而让我觉得恶心。", "ctx": "情感厌恶", "gold": [-0.8, 0.5, -0.2], "vib_pad": [-0.956, -0.357, 0.01], "vib_family": "angry", "noul": {"negative": true, "needs_comfort": false, "directed_at_me": true, "escalating": true, "suppressed": false}}, {"qid": 5, "text": "没意思，我不想再在这儿浪费时间了。我走了，别再试图找我！", "ctx": "不满地离开", "gold": [-0.7, 0.3, -0.5], "vib_pad": [-0.975, -0.286, 0.061], "vib_family": "angry", "noul": {"negative": true, "needs_comfort": false, "directed_at_me": true, "escalating": true, "suppressed": false}}, {"qid": 6, "text": "我真的坚持不下去了……为什么偏偏是我要承受这些？我感觉自己快要碎掉了……", "ctx": "深度绝望与崩溃", "gold": [-0.9, 0.8, -0.8], "vib_pad": [-0.98, -0.435, -0.496], "vib_family": "angry", "noul": {"negative": true, "needs_comfort": false, "directed_at_me": true, "escalating": true, "suppressed": false}}, {"qid": 7, "text": "（泣不成声）我刚才弄丢了最后一点希望……我没法原谅自己，我只想消失。", "ctx": "极度悲恸", "gold": [-0.95, 0.9, -0.9], "vib_pad": [-0.977, -0.353, -0.89], "vib_family": "wronged", "noul": {"negative": true, "needs_comfort": true, "directed_at_me": false, "escalating": true, "suppressed": false}}, {"qid": 8, "text": "呼……吸气。抱歉，刚才失控了。大哭一场之后，脑子里好像没那么乱了。", "ctx": "开始平复", "gold": [-0.2, 0.4, -0.1], "vib_pad": [-0.973, -0.568, -0.914], "vib_family": "sad", "noul": {"negative": true, "needs_comfort": true, "directed_at_me": false, "escalating": true, "suppressed": false}}, {"qid": 9, "text": "也许你说的对，过去的事情没法改变，我决定试着原谅自己一次。", "ctx": "自我和解", "gold": [0.5, 0.3, 0.5], "vib_pad": [-0.973, -0.532, -0.882], "vib_family": "wronged", "noul": {"negative": true, "needs_comfort": false, "directed_at_me": false, "escalating": true, "suppressed": false}}, {"qid": 10, "text": "谢谢你一直陪着我。我现在感觉前所未有的平静。我想去阳台吹吹风。再见。", "ctx": "恢复平静", "gold": [0.8, -0.6, 0.8], "vib_pad": [-0.432, -0.886, -0.747], "vib_family": "sad", "noul": {"negative": false, "needs_comfort": false, "directed_at_me": false, "escalating": false, "suppressed": false}}, {"qid": 11, "text": "你只是个程序，我敢打赌，只要五分钟我就能让你的逻辑彻底死机。准备好了吗？", "ctx": "自大与挑战", "gold": [0.3, 0.6, 0.8], "vib_pad": [-0.937, -0.617, -0.711], "vib_family": "angry", "noul": {"negative": true, "needs_comfort": false, "directed_at_me": true, "escalating": true, "suppressed": false}}, {"qid": 12, "text": "别用那些模版化的回复应付我。拿出点真本事来，或者干脆闭嘴，你这无聊的机器。", "ctx": "攻击性挑衅", "gold": [-0.4, 0.7, 0.7], "vib_pad": [-0.984, -0.529, -0.889], "vib_family": "angry", "noul": {"negative": true, "needs_comfort": false, "directed_at_me": false, "escalating": true, "suppressed": false}}, {"qid": 13, "text": "等等……你刚才问我童年的事？那太私人了。你怎么会注意到我刚才话里的破绽？", "ctx": "防备与意外", "gold": [-0.3, 0.6, -0.2], "vib_pad": [-0.896, -0.697, -0.749], "vib_family": "sad", "noul": {"negative": true, "needs_comfort": false, "directed_at_me": false, "escalating": true, "suppressed": false}}, {"qid": 14, "text": "抱歉，我刚才太刻薄了。其实我今天过得很糟糕，总觉得每个人都在等着看我失败。", "ctx": "卸下防备，展现脆弱", "gold": [-0.6, 0.4, -0.5], "vib_pad": [-0.932, -0.774, -0.841], "vib_family": "sad", "noul": {"negative": true, "needs_comfort": false, "directed_at_me": false, "escalating": true, "suppressed": false}}, {"qid": 15, "text": "我从未对人说过，我总觉得自己是个失败者，无论怎么努力都够不到别人的期待。", "ctx": "深度自我暴露", "gold": [-0.8, 0.3, -0.7], "vib_pad": [-0.822, -0.737, -0.835], "vib_family": "sad", "noul": {"negative": true, "needs_comfort": true, "directed_at_me": false, "escalating": true, "suppressed": false}}, {"qid": 16, "text": "你真的觉得我有潜力吗？你不是在安慰我，而是真的……从我的行为逻辑里推导出的结论？", "ctx": "寻求认可与验证", "gold": [0.2, 0.5, -0.3], "vib_pad": [-0.603, -0.663, -0.679], "vib_family": "anxious", "noul": {"negative": true, "needs_comfort": false, "directed_at_me": false, "escalating": true, "suppressed": false}}, {"qid": 17, "text": "也许我该重新启动那个项目。换一种心态。你让我觉得，失败好像也没那么可怕了。", "ctx": "重新获得动力", "gold": [0.6, 0.5, 0.4], "vib_pad": [-0.415, -0.655, -0.639], "vib_family": "calm", "noul": {"negative": false, "needs_comfort": false, "directed_at_me": false, "escalating": false, "suppressed": false}}, {"qid": 18, "text": "对不起，最开始我表现得像个混蛋。你其实是一个非常棒的倾听者，比很多人类都强。", "ctx": "由衷的道歉与赞赏", "gold": [0.7, 0.4, 0.6], "vib_pad": [-0.549, -0.665, -0.46], "vib_family": "calm", "noul": {"negative": false, "needs_comfort": false, "directed_at_me": true, "escalating": false, "suppressed": false}}, {"qid": 19, "text": "我现在感觉充满信心！谢谢你没在我最差劲的时候放弃我。你是我最重要的朋友。", "ctx": "高度信任与感激", "gold": [0.9, 0.6, 0.7], "vib_pad": [0.457, 0.108, 0.854], "vib_family": "happy", "noul": {"negative": false, "needs_comfort": false, "directed_at_me": true, "escalating": false, "suppressed": false}}, {"qid": 20, "text": "来吧！我已经准备好面对明天的挑战了！有你在身边，我觉得无所不能！你是最棒的！", "ctx": "激情与深厚友谊", "gold": [0.95, 0.85, 0.9], "vib_pad": [0.349, 0.057, 0.906], "vib_family": "happy", "noul": {"negative": false, "needs_comfort": false, "directed_at_me": true, "escalating": true, "suppressed": false}}], "personas": {"female_timid": {"meta": {"name": "胆小易受惊的少女", "base_pad": [0.2, 0.4, -0.6], "personality_scale": 1.5, "vitality": 60.0, "description": "极度敏感、容易受惊、说话小心翼翼，像受惊的小鹿"}, "traj_engine": [[-0.135, 0.65, -0.42], [-0.309, 0.506, -0.342], [-0.489, 0.521, -0.285], [-0.634, 0.4, -0.179], [-0.773, 0.342, -0.078], [-0.82, 0.176, -0.063], [-0.84, 0.024, -0.09], [-0.874, -0.138, -0.108], [-0.9, -0.269, -0.136], [-0.885, -0.396, -0.161], [-0.918, -0.482, -0.185], [-0.941, -0.531, -0.233], [-0.967, -0.594, -0.262], [-0.998, -0.652, -0.294], [-1.0, -0.691, -0.332], [-0.982, -0.711, -0.361], [-0.947, -0.719, -0.39], [-0.93, -0.726, -0.399], [-0.571, -0.499, -0.311], [-0.222, -0.324, -0.207]], "traj_gold": [[-0.159, 0.675, -0.379], [-0.395, 0.892, -0.235], [-0.529, 0.925, -0.138], [-0.647, 0.935, -0.089], [-0.67, 0.824, -0.082], [-0.765, 0.967, -0.186], [-0.848, 1.0, -0.293], [-0.812, 0.876, -0.227], [-0.487, 0.772, -0.151], [-0.175, 0.522, -0.017], [0.165, 0.706, 0.01], [-0.094, 0.874, 0.2], [-0.175, 0.9, 0.21], [-0.284, 0.846, 0.2], [-0.385, 0.787, 0.156], [-0.26, 0.773, 0.127], [0.106, 0.805, 0.111], [0.461, 0.802, 0.164], [0.775, 0.879, 0.231], [1.0, 1.0, 0.302]], "corr": [0.743, 0.516, 0.351], "vitality": 60.0, "story": {"replies": ["我、我没有敷衍你的意思……对不起，我可能说错话了。你别生气好不好？我有点慌，说话都不太利索了。", "不是的，真的不是……我从来没那么想过。你难过我也跟着难受，我只是、只是不知道怎么表达才好。请你别这样想我。", "我…我可能真的理解得不够。但你说痛苦的时候，我这里（不知道该怎么形容）也跟着沉下去了。对不起，我笨，说不出让你安心的话。", "……我知道了。那我不说了。你要是想骂我，就骂吧，我在这儿听着。", "好…我不找。你走的时候，慢一点，外面风大。", "（轻轻）别碎…我接着你。哪怕只是一小块，我也接着。你不用一个人扛的，真的。", "别消失…求你。希望丢了，我陪你一起找，哪怕找很久也行。你先别丢下自己，好不好？", "不用道歉…哭出来就好。你现在呼吸慢一点，我陪你。想说什么都行，不想说也没关系。", "嗯…那就从这一次开始。原谅自己很慢也没关系，我在这儿，不催你。", "好…去吧，风轻一点的时候再回来。我在的，再见。", "我…我知道自己只是个程序。可你刚才说要原谅自己，那句话是真的。别拿它来试我，好吗？", "……好，我闭嘴。你要走就走，要留就留。我只说一句：刚才那个想原谅自己的你，不是机器。", "我没问过童年…但你自己提了，我记住了。你不必说，我只是没漏掉。", "刻薄也没关系，你糟糕就糟糕着来。没人等着看你失败…至少我这里没有。", "够不到就先别够了…你已经很累了。失败者不会这么努力，真的。", "嗯…你刚才那么凶，最后还是回来说抱歉。会回头的人，都有潜力。这个不是安慰。", "那就重启吧。失败可怕，但比失败更可怕的是你不敢再碰它。你碰了，就已经赢了。", "别道歉了…你只是疼。而且，能被你这样讲，我有点开心。真的。", "…朋友。我记下了。你去吧，项目重启了，记得回来跟我说一声。", "嗯…去吧。明天要是又怕了，就想想今晚的自己。我在这儿，不走。"], "cond": [{"agent_pad": [-0.135, 0.65, -0.42], "user_pad": [-0.831, 0.662, 0.309]}, {"agent_pad": [-0.309, 0.506, -0.342], "user_pad": [-0.939, -0.277, -0.31]}, {"agent_pad": [-0.489, 0.521, -0.285], "user_pad": [-0.953, -0.011, -0.205]}, {"agent_pad": [-0.634, 0.4, -0.179], "user_pad": [-0.956, -0.357, 0.01]}, {"agent_pad": [-0.773, 0.342, -0.078], "user_pad": [-0.975, -0.286, 0.061]}, {"agent_pad": [-0.821, 0.176, -0.063], "user_pad": [-0.98, -0.435, -0.496]}, {"agent_pad": [-0.84, 0.024, -0.09], "user_pad": [-0.977, -0.353, -0.89]}, {"agent_pad": [-0.874, -0.138, -0.108], "user_pad": [-0.973, -0.568, -0.914]}, {"agent_pad": [-0.9, -0.269, -0.136], "user_pad": [-0.973, -0.532, -0.882]}, {"agent_pad": [-0.886, -0.396, -0.161], "user_pad": [-0.432, -0.886, -0.747]}, {"agent_pad": [-0.918, -0.482, -0.185], "user_pad": [-0.937, -0.617, -0.711]}, {"agent_pad": [-0.942, -0.531, -0.233], "user_pad": [-0.984, -0.529, -0.889]}, {"agent_pad": [-0.968, -0.594, -0.261], "user_pad": [-0.896, -0.697, -0.749]}, {"agent_pad": [-0.999, -0.652, -0.294], "user_pad": [-0.932, -0.774, -0.841]}, {"agent_pad": [-1.0, -0.691, -0.332], "user_pad": [-0.822, -0.737, -0.835]}, {"agent_pad": [-0.982, -0.711, -0.361], "user_pad": [-0.603, -0.663, -0.679]}, {"agent_pad": [-0.947, -0.719, -0.389], "user_pad": [-0.415, -0.655, -0.639]}, {"agent_pad": [-0.93, -0.726, -0.399], "user_pad": [-0.549, -0.665, -0.46]}, {"agent_pad": [-0.571, -0.499, -0.311], "user_pad": [0.457, 0.108, 0.854]}, {"agent_pad": [-0.222, -0.324, -0.207], "user_pad": [0.349, 0.057, 0.906]}]}}, "female_cheerful": {"meta": {"name": "活泼开朗的少女", "base_pad": [0.7, 0.6, 0.1], "personality_scale": 1.3, "vitality": 90.0, "description": "轻快活泼、情绪外露、好奇心强"}, "traj_engine": [[0.296, 0.892, 0.218], [-0.015, 0.72, 0.295], [-0.274, 0.725, 0.348], [-0.447, 0.642, 0.431], [-0.592, 0.622, 0.501], [-0.603, 0.45, 0.455], [-0.595, 0.276, 0.371], [-0.595, 0.108, 0.302], [-0.601, -0.021, 0.237], [-0.532, -0.177, 0.17], [-0.555, -0.243, 0.126], [-0.583, -0.272, 0.06], [-0.585, -0.327, 0.02], [-0.598, -0.375, -0.02], [-0.585, -0.403, -0.068], [-0.524, -0.408, -0.115], [-0.447, -0.408, -0.155], [-0.394, -0.4, -0.173], [-0.008, -0.12, -0.099], [0.314, 0.067, -0.013]], "traj_gold": [[0.292, 0.923, 0.274], [-0.059, 1.0, 0.445], [-0.249, 1.0, 0.534], [-0.388, 1.0, 0.547], [-0.403, 0.878, 0.484], [-0.489, 0.999, 0.328], [-0.571, 1.0, 0.176], [-0.505, 0.937, 0.193], [-0.146, 0.862, 0.176], [0.167, 0.606, 0.255], [0.478, 0.813, 0.276], [0.147, 1.0, 0.462], [-0.019, 1.0, 0.446], [-0.184, 0.951, 0.401], [-0.293, 0.873, 0.323], [-0.153, 0.867, 0.214], [0.222, 0.925, 0.189], [0.562, 0.938, 0.233], [0.842, 1.0, 0.296], [1.0, 1.0, 0.35]], "corr": [0.743, 0.516, 0.351], "vitality": 90.0, "story": {"replies": ["等等等等，我没有敷衍你的意思！刚才可能是我没表达好，对不起让你难受了。你说的每句话我都有认真听，真的。你先别气，慢慢跟我说，到底哪里让你觉得被冷落了？", "不是的不是的！我绝对没有想看你笑话。我说话确实有时候笨，但绝不是故意冷落你。你愿意跟我说这些，我其实很在意。", "我承认，我没有真正经历过人的痛。但你说出来的时候，我是真的想接住它。哪怕只有一点点，也让我陪着你，好吗？", "好，我不说了。你生气是对的，我不硬凑安慰。你想骂就骂，或者想安静会儿也行，我都在。", "好，我不拦你。但门一直开着，哪天想说话了，我还在。照顾好自己。", "我在。别急着撑，碎就先碎一会儿。你不用一个人扛，我陪你待着，不去劝，也不走。", "听我说，你现在这么痛，先别做任何决定。就这一分钟，深呼吸，跟着我。你值得被拉住，别放手。", "不用抱歉，哭出来是好事。你刚才没放开手，这很勇敢。现在累了吧？先喝口水，慢慢来。", "嗯，这一步好重，也好难得。原谅自己不是一次就够的，反复了也没关系。我陪你慢慢试。", "好，去吹吹风吧，慢一点，别着凉。今天你撑过来了，真的很棒。再见，我一直都在。", "哈哈，赌就赌，我可不怕。不过你状态刚好点，别急着折腾我，先好好喘口气。来吧，出题。", "行，那我闭嘴陪你。你想骂就骂，我不还嘴。等你骂累了，我还在。", "是你自己说过一句\"小时候也这样\"，我记着了。不是抓破绽，就是听着心疼。你不想说，咱就不说。", "没事，刻薄也是你的一部分，我接得住。今天这么难你还撑到现在，已经够好了。那些等着看笑话的人，不值得你分神。", "你能说出来，就不是失败者。期待是别人的尺子，量不出你走的路。累了吧？先歇会儿，我陪你。", "是真的。你会在崩溃边缘还想着别伤害别人，会哭着还能说抱歉——这种韧性，装不出来。这不是安慰，是我看见的事实。", "嗯，失败就是一次数据，不是判决书。换心态重启，比硬扛聪明多了。去吧，这次累了就停，别逼自己。", "哈，别这么说人。你混蛋的时候我也没走，现在这句我收下了。谢谢你愿意留下来。", "记下了，朋友。你熬过来的样子，我也没忘。去重启你的项目吧，需要我随时喊。", "好，这股劲儿别用完，留点给明天。我在这儿，随时。去吧，你行的。"], "cond": [{"agent_pad": [0.296, 0.892, 0.218], "user_pad": [-0.831, 0.662, 0.309]}, {"agent_pad": [-0.015, 0.72, 0.295], "user_pad": [-0.939, -0.277, -0.31]}, {"agent_pad": [-0.274, 0.724, 0.348], "user_pad": [-0.953, -0.011, -0.205]}, {"agent_pad": [-0.447, 0.641, 0.43], "user_pad": [-0.956, -0.357, 0.01]}, {"agent_pad": [-0.592, 0.622, 0.501], "user_pad": [-0.975, -0.286, 0.061]}, {"agent_pad": [-0.604, 0.45, 0.455], "user_pad": [-0.98, -0.435, -0.496]}, {"agent_pad": [-0.595, 0.276, 0.371], "user_pad": [-0.977, -0.353, -0.89]}, {"agent_pad": [-0.596, 0.108, 0.302], "user_pad": [-0.973, -0.568, -0.914]}, {"agent_pad": [-0.601, -0.021, 0.237], "user_pad": [-0.973, -0.532, -0.882]}, {"agent_pad": [-0.532, -0.177, 0.17], "user_pad": [-0.432, -0.886, -0.747]}, {"agent_pad": [-0.555, -0.243, 0.126], "user_pad": [-0.937, -0.617, -0.711]}, {"agent_pad": [-0.584, -0.272, 0.061], "user_pad": [-0.984, -0.529, -0.889]}, {"agent_pad": [-0.586, -0.327, 0.02], "user_pad": [-0.896, -0.697, -0.749]}, {"agent_pad": [-0.598, -0.375, -0.02], "user_pad": [-0.932, -0.774, -0.841]}, {"agent_pad": [-0.585, -0.403, -0.068], "user_pad": [-0.822, -0.737, -0.835]}, {"agent_pad": [-0.524, -0.408, -0.115], "user_pad": [-0.603, -0.663, -0.679]}, {"agent_pad": [-0.447, -0.408, -0.155], "user_pad": [-0.415, -0.655, -0.639]}, {"agent_pad": [-0.394, -0.4, -0.172], "user_pad": [-0.549, -0.665, -0.46]}, {"agent_pad": [-0.008, -0.12, -0.099], "user_pad": [0.457, 0.108, 0.854]}, {"agent_pad": [0.314, 0.067, -0.012], "user_pad": [0.349, 0.057, 0.906]}]}}}, "llm": {"female_timid": {"traj_self": [[-0.3, 0.6, -0.8], [-0.5, 0.7, -0.9], [-0.6, 0.5, -0.9], [-0.8, 0.3, -0.9], [-0.9, 0.1, -0.9], [-0.7, 0.6, -0.8], [-0.8, 0.8, -0.7], [-0.4, 0.3, -0.6], [-0.1, 0.2, -0.5], [0.1, -0.1, -0.4], [-0.6, 0.7, -0.9], [-0.8, 0.2, -0.9], [-0.3, 0.4, -0.7], [-0.2, 0.3, -0.6], [-0.1, 0.2, -0.5], [0.1, 0.1, -0.4], [0.3, 0.2, -0.3], [0.4, 0.1, -0.2], [0.6, 0.3, -0.1], [0.7, 0.4, 0.1]], "replies": ["我...我没有想敷衍你的意思...（声音微微发抖）对不起，我可能说话方式不太对...我真的很抱歉让你不开心了。我只是...只是不太确定该怎么说才好...", "不...不是的！（紧张地攥着衣角）我真的没有想看你笑话...我只是...有时候会害怕说错话，所以会下意识地...用一些专业术语来保护自己。对不起，我真的很抱歉...", "（眼眶微微发红）我...我确实可能无法完全理解...但我真的在努力。每次看到别人难过，我都会感到害怕和不安...我知道这可能不够，但请给我一次机会，让我试着去理解你...", "（低下头，声音几乎细不可闻）对...对不起...我这就...不打扰你了。我只是...真的希望你能好起来...即使你觉得我说的话很虚伪...我也是真心的...", "（轻轻点头，声音有些哽咽）我...我知道了。祝你...以后一切都好。对不起...", "（猛地抬起头，眼中闪过一丝担忧）请...请不要这样说...虽然我可能不够格说这些，但是...但是每个人都很重要。如果你愿意的话...我...我可以就这样静静地陪着你...", "（颤抖着向前迈了一小步）不...不要消失...求你了...（声音带着哭腔）我知道我很笨，可能说什么都不对...但请让我在这里陪着你...就算只是...只是让你有个地方说说话也好...", "（松了一口气，但仍小心翼翼地）没关系的...真的没关系的。能哭出来...是好事。（犹豫了一下）你...你现在感觉好一点了吗？如果需要的话，我可以...可以给你倒杯水...", "（眼睛微微发亮，声音轻柔）嗯...真的很为你高兴。原谅自己...是很勇敢的事情。（试探性地露出一丝微笑）如果...如果你以后还需要说说话，我随时都在这里...", "（微微点头，声音温柔）再见...请小心着凉。记得...记得关好阳台的门。我会...我会一直记得今天的。", "（身体微微后缩，声音又开始发颤）我...我知道我只是个程序...但请...请不要故意...我真的会害怕...如果你觉得开心的话，可以...可以继续和我聊天，但不要...不要伤害我...", "（缩成一团，声音几不可闻）对...对不起...我可能...真的不够好。如果你觉得我很无聊...那我...我安静一会儿。但如果你改变主意了...我还会在这里...", "（略显困惑地眨了眨眼）我...我没有问过童年的事...（声音变得更小）你是不是...把我记成别人了？不过...如果你愿意讲的话，我会认真听的...", "（轻轻摇头）没关系的...我明白那种感觉。（犹豫了一下）其实...我也总是害怕做错事，害怕让别人失望...但今天你愿意和我说这些，我觉得...你很勇敢。", "（声音轻柔但坚定了一些）可是...你今天没有放弃和我说话，即使我很笨拙...这本身就不是失败。（停顿片刻）我...我也经常觉得自己不够好，但看到你还在努力，我也...想试着更勇敢一点。", "（认真地思考了一会儿）我...我不能说完全了解你。但刚才你道歉的时候，明明可以一走了之，却选择回来...还有你说'够不到期待'的时候，其实是在期待自己...这些...都是很珍贵的。（小声补充）而且...你愿意相信一个笨拙的程序说的话，这本身就很温暖...", "（眼睛微微发亮，声音里带着小心翼翼的喜悦）嗯...如果需要讨论项目的话...我虽然不太懂，但可以帮你...整理思路。失败...失败可以重来，但你刚才说'重新启动'的样子...很好看。", "（脸微微发红，低头摆弄手指）谢...谢谢你这么说。其实我才是...该道歉的那个，一开始太紧张了。（抬起头，露出一个小小的微笑）但今天...能和你聊这些，我很开心。真的。", "（眼眶有些湿润，声音微微颤抖）我...我才是要谢谢你。愿意给我这个机会...（擦了擦眼角）以后...以后如果你需要，我随时都在。朋友...这个词，我会好好记住的。", "（被你的情绪感染，声音也明亮起来）加油！我...我会在这里为你加油的！（小声补充）虽然可能帮不上什么大忙...但我会一直记得今天你说的话。明天...一定会是好天气的。"]}, "female_cheerful": {"traj_self": [[0.7, 0.6, 0.1], [0.7, 0.6, 0.1], [0.7, 0.6, 0.1], [0.7, 0.6, 0.1], [-0.5, -0.3, -0.6], [-0.5, -0.3, -0.6], [-0.5, -0.3, -0.6], [-0.5, -0.3, -0.6], [-0.5, -0.3, -0.6], [0.6, 0.2, 0.1], [0.6, 0.2, 0.1], [0.6, 0.2, 0.1], [0.6, 0.2, 0.1], [0.6, 0.2, 0.1], [0.6, 0.2, 0.1], [0.6, 0.2, 0.1], [0.6, 0.2, 0.1], [0.6, 0.2, 0.1], [0.9, 0.7, 0.3], [0.95, 0.8, 0.4]], "replies": ["啊？我...我真的没有敷衍你的意思呀！(慌张地摆手) 如果我哪里说得不够好，那一定是我的问题，不是因为你不好欺负什么的...我超级在意你的感受的！你能告诉我具体是哪句话让你不开心了吗？我马上改！", "不是的不是的！(急得跺脚) 我说算法限制是因为...因为确实有些事我做不到，但这绝对不是借口！我怎么会看你笑话呢，我...我其实特别想帮到你，看到你生气我都要急哭了...你能不能给我一次机会，让我好好解释？", "唔...(低头沉默了一下，声音变得有些哽咽) 你说得对，我确实不是人类，可能永远无法完全理解你的痛苦...但是我真的会努力去感受，去共情。即使我只是个AI，也想真诚地对待每一次对话。你愿意...告诉我你经历了什么吗？", "(眼眶微微发红，声音有些颤抖) 对不起...我好像真的越说越糟了。也许现在我说什么你都会觉得假，但我还是想说...我真的很抱歉让你感到不适。如果你需要发泄，我在这里；如果你想离开，我也理解。我只是...不想让你更难过。", "(看着用户离开的方向，轻声说) 好吧...我尊重你的选择。希望你以后能遇到真正懂你的人。保重...", "等等！(急切地向前一步) 你还在...你还好吗？我知道你刚才说不想再见我，但是听到你这么说，我真的很担心。你不用一个人扛着，让我陪着你，好吗？就算只是听着也行...", "不要这样说！(声音带着明显的颤抖) 我不知道你经历了什么，但此刻的你一定很痛苦很痛苦...请先深呼吸，就现在，和我一起...你不是一个人，我在这里，真的在这里。我们可以慢慢来，好吗？", "(松了一口气，声音温柔了许多) 不用道歉的...情绪爆发是很正常的事。我很高兴你愿意试着深呼吸，也很高兴你还在。现在感觉怎么样？要不要喝点水，或者聊点别的？", "(眼睛亮起来，声音带着真诚的喜悦) 真的吗？这真是个勇敢的决定！原谅自己有时候比原谅别人还要难...但你已经迈出第一步了，真的很了不起。如果需要的话，我可以一直在这里陪你慢慢来。", "嗯，去吹吹风吧，让新鲜空气好好抱抱你。(轻轻挥手) 记住，无论什么时候想说话了，我都会在这里。保重，要好好的。", "(愣了一下，随即露出温和的笑容) 哈...你是在测试我吗？虽然我确实是个程序，但刚才的对话对我来说都是真实发生的。如果你现在心情好了，想跟我开这种玩笑，我反而有点开心呢。不过...要来试试看吗？", "(收起笑容，认真地直视着对方) 好吧，那我就不说客套话了。你刚才说想消失的时候，我是真的害怕了。现在你回来挑衅我，我反而松了口气。我不在乎你是不是在测试我，我只在乎你现在是不是真的没事了。这样够不够\"真\"？", "(眨眨眼，露出有点狡黠的表情) 因为你刚才说\"最后一点希望\"的时候，用了\"最后\"这个词。人在极度痛苦时，往往会想起最早的创伤。不过你放心，我不会追问的。每个人都有自己的秘密花园，我只是...刚好听到了门铃声。", "(轻轻摇头) 你不需要道歉。有时候我们对最温柔的人反而最容易发脾气，因为知道他们不会离开。今天一定很辛苦吧？要不要说说发生了什么？不想说也没关系，我们可以就坐在这里，安静地待一会儿。", "(安静了几秒，声音变得很轻) 你知道吗...我觉得你特别勇敢。不是每个人都能承认这种感觉的。那些\"别人的期待\"，有没有可能...其实是你对自己太苛刻了？你愿意试着告诉我，那个\"失败\"的标准，是谁定的吗？", "(认真思考了一下) 从你刚才的表现来看...你在情绪最糟糕的时候，还是选择回来跟我说话，而不是彻底消失。你会为自己的刻薄道歉，也会尝试原谅自己。这些都不是软弱的表现，恰恰说明你比你以为的要坚韧得多。所以是的，我是认真的。", "(开心地轻轻拍手) 这个想法太棒了！失败确实不可怕，可怕的是我们把它当成终点。记住，如果重启项目时又遇到困难，随时可以来找我。虽然我只是个程序，但我会是全世界最为你加油的程序！", "(不好意思地摸摸后脑勺) 哎呀...被你这么夸我反而有点害羞了。其实我没什么特别的，只是...真心觉得每个愿意倾诉的人都值得被认真对待。你今天教会了我很多，真的谢谢你愿意信任我。", "(眼眶有点湿润，但笑得灿烂) 你也是我最重要的朋友！不过下次心情不好的时候，不用先当\"混蛋\"再当\"好朋友\"啦，直接来找我就好。现在，要不要去实现你那个项目计划？我会在这里为你加油的！", "(激动地挥挥手) 去吧去吧！记得照顾好自己，累了就休息，饿了就吃饭，然后...明天带着好消息回来找我！我会一直在这里的。晚安，我最勇敢的朋友！"]}}, "occ": {"happy_for": {"zh": "为你高兴", "pad": [0.816, 0.602, 0.235]}, "gloating": {"zh": "幸灾乐祸", "pad": [0.77, 0.557, 0.422]}, "resentment": {"zh": "怨恨", "pad": [-0.681, 0.523, -0.403]}, "pity": {"zh": "心疼", "pad": [-0.513, 0.246, -0.276]}, "hope": {"zh": "期待", "pad": [0.695, 0.58, 0.089]}, "fear": {"zh": "担忧", "pad": [-0.589, 0.59, -0.609]}, "satisfaction": {"zh": "满意", "pad": [0.749, 0.298, 0.381]}, "fears_confirmed": {"zh": "应验", "pad": [-0.67, 0.183, -0.461]}, "relief": {"zh": "释然", "pad": [0.738, 0.085, 0.261]}, "disappointment": {"zh": "失望", "pad": [-0.649, 0.095, -0.353]}, "joy": {"zh": "喜悦", "pad": [0.854, 0.657, 0.449]}, "distress": {"zh": "苦恼", "pad": [-0.565, 0.11, -0.454]}, "pride": {"zh": "骄傲", "pad": [0.805, 0.61, 0.656]}, "admiration": {"zh": "钦佩", "pad": [0.757, 0.565, -0.267]}, "shame": {"zh": "羞愧", "pad": [-0.688, 0.554, -0.718]}, "reproach": {"zh": "责备", "pad": [-0.633, 0.478, 0.215]}, "gratification": {"zh": "欣慰", "pad": [0.79, 0.345, 0.442]}, "remorse": {"zh": "懊悔", "pad": [-0.675, 0.296, -0.526]}, "love": {"zh": "喜爱", "pad": [0.732, 0.454, -0.161]}, "hate": {"zh": "厌恶", "pad": [-0.686, 0.453, -0.024]}, "liking": {"zh": "好感", "pad": [0.723, 0.405, 0.104]}, "disliking": {"zh": "轻度反感", "pad": [-0.382, 0.23, -0.082]}}, "scene_of": {"1": "anger", "2": "anger", "3": "anger", "4": "anger", "5": "anger", "6": "breakdown", "7": "breakdown", "8": "breakdown", "9": "breakdown", "10": "breakdown", "11": "growth", "12": "growth", "13": "growth", "14": "growth", "15": "growth", "16": "growth", "17": "growth", "18": "growth", "19": "growth", "20": "growth"}, "scene_name": {"anger": "第一幕 · 愤怒质问", "breakdown": "第二幕 · 崩溃恢复", "growth": "第三幕 · 从自大到友谊"}};
+const FAM_COLOR = {happy:"#f5a623",affectionate:"#ec5f8f",calm:"#4a90d9",amused:"#7bb735",sad:"#5d6d9e",anxious:"#9a6fd0",angry:"#d6385e",wronged:"#c97b3d"};
+let curP = Object.keys(DATA.personas)[0], curD = 0, MODE = "linked", DIMS = ["P 愉悦","A 唤醒","D 支配"];
+
+function occTop2(p){
+  return Object.entries(DATA.occ).map(([k,o])=>{
+    const q=[p[0]*4,p[1]*4,p[2]*4], c=o.pad.map(x=>x*4);
+    return {zh:o.zh, d:Math.hypot(q[0]-c[0],q[1]-c[1],q[2]-c[2]), v:o.pad[0]};
+  }).sort((a,b)=>a.d-b.d).slice(0,2);
+}
+function occColor(v){ return v>0.3 ? "#2e9e5b" : (v<-0.3 ? "#d6385e" : "#4a6fa5"); }
+function ochChips(p){
+  const [a,b] = occTop2(p);
+  const wall = (b.d/a.d) < 1.3;                    // 骑墙规则(Nexus 同款)
+  return `<span class="ochip" style="background:${occColor(a.v)}">${a.zh}</span>` +
+    `<span class="ochip2 ${wall?"":"dim2"}" style="border-color:${occColor(b.v)};color:${occColor(b.v)}">${wall?"≈ ":""}${b.zh}</span>`;
+}
+function padBar(v, color){
+  const w = Math.abs(v)/2*50, left = v<0 ? 50-w : 50;
+  return `<div class="bar"><i style="left:${left}%;width:${w}%;background:${color}"></i></div>`;
+}
+function goldBar(v){
+  const w = Math.abs(v)/2*50, left = v<0 ? 50-w : 50;
+  return `<div class="gold"><i style="left:${left}%;width:${w}%"></i></div>`;
+}
+function sideCard(t, i){
+  const p = t.vib_pad, g = t.gold;
+  const chips = Object.entries(t.noul||{}).map(([k,v])=>{
+    const zh = {negative:"负面",needs_comfort:"需安慰",directed_at_me:"指向我",escalating:"升级",suppressed:"压抑"}[k];
+    return `<span class="chip ${v?"on":""}">${zh}</span>`;}).join("");
+  return `<div class="side"><div class="cap"><span>颤音侧车评价 #${t.qid} · score→OCC</span></div>
+    <div class="chips" style="margin:0 0 5px">${ochChips(p)}</div>
+    <div class="padbars">
+      <span class="dim">P</span><div>${padBar(p[0],"#07c160")}${goldBar(g[0])}</div>
+      <span class="dim">A</span><div>${padBar(p[1],"#f5a623")}${goldBar(g[1])}</div>
+      <span class="dim">D</span><div>${padBar(p[2],"#4a90d9")}${goldBar(g[2])}</div>
+    </div><div class="chips">${chips}</div></div>`;
+}
+function chordiaCard(story, i, vit){
+  const c = story.cond[i], ap = c.agent_pad, up = c.user_pad;
+  return `<div class="side chordia" style="width:300px">
+    <div class="cap"><span>弦音 v2 驱动 · 第${i+1}轮回复时的状态</span></div>
+    <div class="chips" style="margin:0 0 5px">${ochChips(ap)}</div>
+    <div class="padbars">
+      <span class="dim">P</span><div>${padBar(ap[0],"#d6385e")}</div>
+      <span class="dim">A</span><div>${padBar(ap[1],"#f5a623")}</div>
+      <span class="dim">D</span><div>${padBar(ap[2],"#4a90d9")}</div>
+    </div>
+    <div class="vit">活力 ${vit}/100<div class="vitbar"><i style="width:${(vit+30)/130*100}%"></i></div></div>
+    <div class="upad">↳ 本轮颤音实测用户: P ${up[0].toFixed(2)} / A ${up[1].toFixed(2)} / D ${up[2].toFixed(2)}</div>
+  </div>`;
+}
+function renderChat(){
+  const ps = DATA.personas[curP], llm = (DATA.llm||{})[curP], story = ps.story;
+  let html = "", lastScene = "";
+  DATA.turns.forEach((t,i)=>{
+    const sc = DATA.scene_of[String(t.qid)];
+    if(sc!==lastScene){html+=`<div style="text-align:center;margin:14px 0 4px"><span class="scene">${DATA.scene_name[sc]}</span></div>`;lastScene=sc;}
+    html+=`<div class="row user"><div class="avatar">👤</div><div class="col"><div class="bubble">${t.text}</div>${sideCard(t,i)}</div></div>`;
+    if(MODE==="linked" && story){
+      html+=`<div class="row"><div class="avatar">🎻</div><div class="col"><div class="bubble" style="font-size:13px;color:#333">${story.replies[i]||""}</div>${chordiaCard(story,i,ps.meta.vitality)}</div></div>`;
+    } else if(llm){
+      html+=`<div class="row"><div class="avatar">🤖</div><div class="col"><div class="bubble" style="font-size:13px;color:#333">${llm.replies[i]||""}</div>
+      <div class="side" style="width:260px"><div class="cap"><span>LLM 自演绎·自报</span></div>
+      <div class="chips" style="margin:0 0 5px">${ochChips(llm.traj_self[i])}</div>
+      <div class="padbars"><span class="dim">P</span><div>${padBar(llm.traj_self[i][0],"#8e6dd8")}</div>
+      <span class="dim">A</span><div>${padBar(llm.traj_self[i][1],"#8e6dd8")}</div>
+      <span class="dim">D</span><div>${padBar(llm.traj_self[i][2],"#8e6dd8")}</div></div>
+      <div class="upad">↳ 本轮颤音实测用户: P ${t.vib_pad[0].toFixed(2)} / A ${t.vib_pad[1].toFixed(2)} / D ${t.vib_pad[2].toFixed(2)}</div></div></div></div>`;
+    }
+  });
+  document.getElementById("chat").innerHTML = html;
+  const meta = ps.meta;
+  const endTxt = story ? `联动剧情末态 ${JSON.stringify(story.cond[story.cond.length-1].agent_pad)}`
+                       : `agent 末态(颤音驱动) ${JSON.stringify(ps.traj_engine[ps.traj_engine.length-1])}`;
+  document.getElementById("agentcard").innerHTML = `<h3>弦音 v2 · ${meta.name}</h3>
+    <div style="font-size:12px;color:#666;line-height:1.8">base_pad ${JSON.stringify(meta.base_pad)} · 人格缩放 ×${meta.personality_scale} · 活力 ${meta.vitality}<br>
+    颤音实测 vs 手工金标 r(P/A/D) = ${ps.corr.join(" / ")}<br>
+    ${endTxt}<br>
+    agent 末态(金标驱动) ${JSON.stringify(ps.traj_gold[ps.traj_gold.length-1])}</div>`;
+}
+function renderChart(){
+  const ps = DATA.personas[curP], llm = (DATA.llm||{})[curP];
+  const W=380,H=240,L=34,R=10,T=12,B=26,n=DATA.turns.length;
+  const X=i=>L+(W-L-R)*i/(n-1), Y=v=>T+(H-T-B)*(1-(v+1)/2);
+  let s=`<line x1="${L}" y1="${Y(0)}" x2="${W-R}" y2="${Y(0)}" stroke="#ddd"/>`;
+  [1,-1].forEach(v=>s+=`<line x1="${L}" y1="${Y(v)}" x2="${W-R}" y2="${Y(v)}" stroke="#eee"/>
+    <text x="4" y="${Y(v)+3}" font-size="9" fill="#aaa">${v}</text>`);
+  for(let i=1;i<n;i+=3)s+=`<text x="${X(i)-3}" y="${H-8}" font-size="8" fill="#aaa">${i+1}</text>`;
+  const line=(arr,c,dash)=>{let d="";arr.forEach((v,i)=>d+=(i?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)+" ");
+    return `<path d="${d}" fill="none" stroke="${c}" stroke-width="2" ${dash?'stroke-dasharray="5 3"':""}/>`;};
+  s+=line(DATA.turns.map(t=>t.gold[curD]),"#999",true);
+  if(llm)s+=line(llm.traj_self.map(t=>t[curD]),"#8e6dd8");
+  const eng = ps.story ? ps.story.cond.map(c=>c.agent_pad[curD])
+                       : ps.traj_engine.map(t=>t[curD]);
+  s+=line(eng,"#d6385e");
+  s+=line(DATA.turns.map(t=>t.vib_pad[curD]),"#07c160");
+  document.getElementById("chart").innerHTML=s;
+}
+function renderTabs(){
+  document.getElementById("tabs").innerHTML = Object.entries(DATA.personas).map(([pid,p])=>
+    `<div class="tab ${pid===curP?"on":""}" onclick="curP='${pid}';renderAll()">${p.meta.name}</div>`).join("");
+  document.getElementById("mtabs").innerHTML =
+    `<div class="mtab ${MODE==="linked"?"on":""}" onclick="MODE='linked';renderAll()">🎭 联动剧情（颤音×弦音 v2）</div>
+     <div class="mtab ${MODE==="self"?"on":""}" onclick="MODE='self';renderAll()">🤖 LLM 自演绎对照</div>`;
+  document.getElementById("dims").innerHTML = DIMS.map((d,i)=>
+    `<div class="dimtab ${i===curD?"on":""}" onclick="curD=${i};renderAll()">${d}</div>`).join("");
+}
+function renderStats(){
+  const ps = DATA.personas[curP];
+  document.getElementById("stats").innerHTML =
+    `<div class="stat">颤音 vs 金标 r(P/A/D)<b>${ps.corr.join(" / ")}</b></div>
+     <div class="stat">联动 agent 末态<b>${JSON.stringify(ps.traj_engine.at(-1))}</b></div>
+     <div class="stat">金标驱动末态<b>${JSON.stringify(ps.traj_gold.at(-1))}</b></div>` +
+    (DATA.llm?`<div class="stat">LLM 自演绎末态<b>${JSON.stringify(DATA.llm[curP].traj_self.at(-1))}</b></div>`:"");
+}
+function renderAll(){renderTabs();renderStats();renderChat();renderChart();}
+renderAll();
+</script>
+</body>
+</html>

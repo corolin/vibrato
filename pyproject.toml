@@ -1,0 +1,18 @@
+[project]
+name = "vibrato"
+version = "0.1.1"
+description = "A complete System One model for emotion — emotion reading as typed decisions"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.0",
+]
+
+[project.optional-dependencies]
+bge = ["transformers", "numpy"]
+onnx = ["onnxruntime", "tokenizers", "numpy"]
+eval = ["transformers", "numpy", "onnxruntime"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

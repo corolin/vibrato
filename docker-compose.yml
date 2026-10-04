@@ -1,0 +1,20 @@
+services:
+  vibrato:
+    build: .
+    container_name: vibrato
+    restart: unless-stopped
+    ports:
+      - "18973:18973"
+    env_file: .env
+    environment:
+      - VIBRATO_API_KEY=${VIBRATO_API_KEY}
+      - VIBRATO_THREADS=2
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:18973/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 1G

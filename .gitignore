@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+node_modules/
+
+# Model artifacts (download from releases)
+*.onnx
+*.pt
+*.pth
+*.mm
+models/
+checkpoints/
+bge_onnx/
+fused_onnx/
+
+# Training data corpora (regenerate with pipeline; eval sheets in data/ ARE tracked)
+data/conversations.jsonl
+data/convos_*.jsonl
+data/labels_*.jsonl
+data/agent_labels.jsonl
+data/legacy_*.jsonl
+data/mixed_v*.jsonl
+data/occ_cases.jsonl
+data/occ_dataset.jsonl
+data/sa*_*rows*.jsonl
+data/flat_rows.jsonl
+data/v6_train.jsonl
+data/v6_val.jsonl
+data/sanity_convos.jsonl
+data/vibrato_dataset.jsonl
+data/feats_*.mm
+data/feats_*_index.json
+
+# Release artifacts
+dist/
+*.zip
+
+# Internal (never publish)
+DEV.md
+.showdown_env
+
+# Temp/scratch
+_*.json
+_*.jsonl
+*.log
+*.flag
+.DS_Store
+Thumbs.db
+
+# Ops scripts (server-internal)
+tools/
+
+# Generated demo data
+demo/demo_llm.json
+demo/demo_linked.json
+demo/memory/
+demo/原型/

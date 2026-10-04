@@ -1,0 +1,27 @@
+# Vibrato dependencies
+# Training + inference + ONNX export + benchmark
+#
+# Install: pip install -r requirements.txt
+# Runtime-only (ONNX deployment, zero torch): pip install onnxruntime tokenizers numpy
+
+# ── Training (GPU) ──
+torch>=2.0                          # 2.14.0+cu126 tested; CPU-only works for inference
+
+# ── Embedding backbone (frozen, inference-only) ──
+transformers>=4.40                   # 5.18.0 tested; loads bge-m3 / e5-small / any HF model
+numpy>=1.24                          # 2.5.3 tested
+
+# ── ONNX export + quantization + CPU inference ──
+onnx>=1.15                           # 1.23.1 tested; required by torch.onnx.export
+onnxruntime>=1.17                    # 1.30.0 tested; CPU inference + int8 quantization
+
+# ── Tokenizer (rust, zero-Python deps; for ONNX bundle deployment) ──
+tokenizers>=0.20                     # 0.23.2 tested; standalone .json tokenizer loading
+
+# ── Optional: HTTP serve (serve.py) ──
+# fastapi>=0.110
+# uvicorn>=0.29
+# pydantic>=2.0
+
+# ── Optional: data generation (any OpenAI-compatible endpoint) ──
+# No extra deps — uses stdlib urllib.request
