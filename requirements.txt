@@ -12,7 +12,7 @@ transformers>=4.40                   # 5.18.0 tested; loads bge-m3 / e5-small / 
 numpy>=1.24                          # 2.5.3 tested
 
 # ── ONNX export + quantization + CPU inference ──
-onnx>=1.15                           # 1.23.1 tested; required by torch.onnx.export
+onnx>=1.23.1                           # 1.23.1 tested; required by torch.onnx.export
 onnxruntime>=1.17                    # 1.30.0 tested; CPU inference + int8 quantization
 
 # ── Tokenizer (rust, zero-Python deps; for ONNX bundle deployment) ──
